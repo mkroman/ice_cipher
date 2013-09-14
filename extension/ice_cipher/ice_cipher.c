@@ -1,44 +1,44 @@
 #include "bindings.h"
-#include "ice_encryption.h"
+#include "ice_cipher.h"
 #include "ice.h"
 
-void ice_encryption_deallocate(void* data)
+void ice_cipher_deallocate(void* data)
 {
 	ICE_KEY* key = (ICE_KEY*)data;
 
 	ice_key_destroy(key);
 }
 
-VALUE ice_encryption_allocate(VALUE klass)
+VALUE ice_cipher_allocate(VALUE klass)
 {
 	ICE_KEY* key = ice_key_create(0);
 
-	return Data_Wrap_Struct(klass, NULL, ice_encryption_deallocate, key);
+	return Data_Wrap_Struct(klass, NULL, ice_cipher_deallocate, key);
 }
 
-void Init_ice_encryption()
+void Init_ice_cipher_class()
 {
-	VALUE cIceEncryption = rb_define_class_under(kIceModule, "Encryption", rb_cObject);
+	VALUE cIcecipher = rb_define_class_under(kIceModule, "Cipher", rb_cObject);
 
-	rb_define_alloc_func(cIceEncryption, ice_encryption_allocate);
-	rb_define_method(cIceEncryption, "initialize", ice_encryption_initialize, 1);
-	rb_define_method(cIceEncryption, "key_size", ice_encryption_key_size, 0);
-	rb_define_method(cIceEncryption, "block_size", ice_encryption_block_size, 0);
-	rb_define_method(cIceEncryption, "key=", ice_encryption_set_key, 1);
-	rb_define_method(cIceEncryption, "encrypt", ice_encryption_encrypt, 1);
-	rb_define_method(cIceEncryption, "decrypt", ice_encryption_decrypt, 1);
+	rb_define_alloc_func(cIcecipher, ice_cipher_allocate);
+	rb_define_method(cIcecipher, "initialize", ice_cipher_initialize, 1);
+	rb_define_method(cIcecipher, "key_size", ice_cipher_key_size, 0);
+	rb_define_method(cIcecipher, "block_size", ice_cipher_block_size, 0);
+	rb_define_method(cIcecipher, "key=", ice_cipher_set_key, 1);
+	rb_define_method(cIcecipher, "encrypt", ice_cipher_encrypt, 1);
+	rb_define_method(cIcecipher, "decrypt", ice_cipher_decrypt, 1);
 }
 
-VALUE ice_encryption_initialize(VALUE self, VALUE level)
+VALUE ice_cipher_initialize(VALUE self, VALUE level)
 {
 	Check_Type(level, T_FIXNUM);
 
-	ice_encryption_create_key(self, NUM2INT(level), NULL);
+	ice_cipher_create_key(self, NUM2INT(level), NULL);
 
 	return self;
 }
 
-void ice_encryption_create_key(VALUE self, int level, unsigned char* key)
+void ice_cipher_create_key(VALUE self, int level, unsigned char* key)
 {
 	// Destroy the current key
 	ICE_KEY* ik;
@@ -55,12 +55,12 @@ void ice_encryption_create_key(VALUE self, int level, unsigned char* key)
 
 	if (key != NULL)
 	{
-		// Set an encryption key
+		// Set an cipher key
 		ice_key_set(ik, key);
 	}
 }
 
-VALUE ice_encryption_key_size(VALUE self)
+VALUE ice_cipher_key_size(VALUE self)
 {
 	ICE_KEY* key;
 
@@ -69,7 +69,7 @@ VALUE ice_encryption_key_size(VALUE self)
 	return INT2NUM(ice_key_key_size(key));
 }
 
-VALUE ice_encryption_block_size(VALUE self)
+VALUE ice_cipher_block_size(VALUE self)
 {
 	ICE_KEY* key;
 
@@ -78,7 +78,7 @@ VALUE ice_encryption_block_size(VALUE self)
 	return INT2NUM(ice_key_block_size(key));
 }
 
-VALUE ice_encryption_set_key(VALUE self, VALUE value)
+VALUE ice_cipher_set_key(VALUE self, VALUE value)
 {
 	ICE_KEY* key;
 
@@ -95,7 +95,7 @@ VALUE ice_encryption_set_key(VALUE self, VALUE value)
 	return Qnil;
 }
 
-VALUE ice_encryption_encrypt(VALUE self, VALUE text)
+VALUE ice_cipher_encrypt(VALUE self, VALUE text)
 {
 	ICE_KEY*       key;
 	VALUE          result;
@@ -138,7 +138,7 @@ VALUE ice_encryption_encrypt(VALUE self, VALUE text)
 	return result;
 }
 
-VALUE ice_encryption_decrypt(VALUE self, VALUE text)
+VALUE ice_cipher_decrypt(VALUE self, VALUE text)
 {
 	ICE_KEY*       key;
 	VALUE          result;

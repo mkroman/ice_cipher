@@ -1,10 +1,10 @@
 #include "bindings.h"
-#include "ice_encryption.h"
+#include "ice_cipher.h"
 
 VALUE kIceModule = Qnil;
 
 void Init_ice_cipher() {
 	kIceModule = rb_define_module("ICE");
 
-	Init_ice_encryption();
+	Init_ice_cipher_class();
 }

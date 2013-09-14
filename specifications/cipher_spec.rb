@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe ICE::Encryption do
+describe ICE::Cipher do
   describe "minimal instance" do
-    subject { ICE::Encryption.new 0 }
+    subject { ICE::Cipher.new 0 }
 
     it "should have key size of 8" do
       expect(subject.key_size).to eq 8
@@ -21,7 +21,7 @@ describe ICE::Encryption do
 
   describe "instance with a key" do
     subject do
-      ICE::Encryption.new(0).tap do |this|
+      ICE::Cipher.new(0).tap do |this|
         this.key = "12345678"
       end
     end
